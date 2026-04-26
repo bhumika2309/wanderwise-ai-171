@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "sonner";
 
 const searchSchema = z.object({
-  redirect: z.string().optional().default("/plan"),
+  redirect: z.string().optional(),
 });
 
 export const Route = createFileRoute("/login")({
