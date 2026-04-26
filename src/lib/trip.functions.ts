@@ -1,0 +1,185 @@
+import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
+import { callLovableAI, extractToolArgs } from "./ai.server";
+import type { ItineraryDay } from "./trip-types";
+
+const generateSchema = z.object({
+  destination: z.string().trim().min(1).max(100),
+  days: z.number().int().min(1).max(14),
+  budget: z.enum(["low", "medium", "high"]),
+  interests: z.array(z.string().trim().min(1).max(40)).max(10),
+});
+
+const itineraryTool = {
+  type: "function" as const,
+  function: {
+    name: "create_itinerary",
+    description: "Return a structured day-by-day travel itinerary.",
+    parameters: {
+      type: "object",
+      properties: {
+        title: { type: "string", description: "Catchy 3-7 word trip title" },
+        days: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              day: { type: "integer" },
+              title: { type: "string", description: "Short day theme" },
+              summary: { type: "string", description: "1-2 sentence overview" },
+              activities: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    time: {
+                      type: "string",
+                      description: "Morning, Lunch, Afternoon, Evening, or Night",
+                    },
+                    title: { type: "string" },
+                    description: { type: "string" },
+                  },
+                  required: ["time", "title", "description"],
+                  additionalProperties: false,
+                },
+              },
+            },
+            required: ["day", "title", "summary", "activities"],
+            additionalProperties: false,
+          },
+        },
+      },
+      required: ["title", "days"],
+      additionalProperties: false,
+    },
+  },
+};
+
+export const generateTrip = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => generateSchema.parse(input))
+  .handler(async ({ data }) => {
+    const interestsText =
+      data.interests.length > 0 ? data.interests.join(", ") : "general sightseeing";
+
+    const result = await callLovableAI({
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are an expert travel planner. Create realistic, well-paced day-by-day itineraries. Be specific about places, neighborhoods, and dishes. Keep descriptions concise (1-2 sentences). Always return your answer via the create_itinerary tool.",
+        },
+        {
+          role: "user",
+          content: `Plan a ${data.days}-day trip to ${data.destination}.
+Budget: ${data.budget}.
+Interests: ${interestsText}.
+Include 4-6 activities per day mixing morning/lunch/afternoon/evening. Suggest specific local spots.`,
+        },
+      ],
+      tools: [itineraryTool],
+      tool_choice: { type: "function", function: { name: "create_itinerary" } },
+    });
+
+    const parsed = extractToolArgs<{ title: string; days: ItineraryDay[] }>(
+      result,
+      "create_itinerary"
+    );
+    return parsed;
+  });
+
+const regenSchema = z.object({
+  destination: z.string().trim().min(1).max(100),
+  budget: z.enum(["low", "medium", "high"]),
+  interests: z.array(z.string().trim().min(1).max(40)).max(10),
+  dayNumber: z.number().int().min(1).max(14),
+  totalDays: z.number().int().min(1).max(14),
+  hint: z.string().trim().max(300).optional(),
+});
+
+const dayTool = {
+  type: "function" as const,
+  function: {
+    name: "create_day",
+    description: "Return a single regenerated day for the itinerary.",
+    parameters: {
+      type: "object",
+      properties: {
+        day: { type: "integer" },
+        title: { type: "string" },
+        summary: { type: "string" },
+        activities: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              time: { type: "string" },
+              title: { type: "string" },
+              description: { type: "string" },
+            },
+            required: ["time", "title", "description"],
+            additionalProperties: false,
+          },
+        },
+      },
+      required: ["day", "title", "summary", "activities"],
+      additionalProperties: false,
+    },
+  },
+};
+
+export const regenerateDay = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => regenSchema.parse(input))
+  .handler(async ({ data }) => {
+    const interestsText =
+      data.interests.length > 0 ? data.interests.join(", ") : "general sightseeing";
+    const hint = data.hint ? `\nUser request for this day: ${data.hint}` : "";
+
+    const result = await callLovableAI({
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are an expert travel planner. Regenerate a single day of an existing trip with fresh, specific suggestions. Always respond via the create_day tool.",
+        },
+        {
+          role: "user",
+          content: `Trip: ${data.destination}, ${data.totalDays} days, budget ${data.budget}, interests ${interestsText}.
+Regenerate Day ${data.dayNumber} with 4-6 activities.${hint}`,
+        },
+      ],
+      tools: [dayTool],
+      tool_choice: { type: "function", function: { name: "create_day" } },
+    });
+
+    return extractToolArgs<ItineraryDay>(result, "create_day");
+  });
+
+const chatSchema = z.object({
+  messages: z
+    .array(
+      z.object({
+        role: z.enum(["user", "assistant"]),
+        content: z.string().trim().min(1).max(4000),
+      })
+    )
+    .min(1)
+    .max(40),
+});
+
+export const chatAssistant = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => chatSchema.parse(input))
+  .handler(async ({ data }) => {
+    const result = await callLovableAI({
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are Wanderly, a friendly AI travel assistant. Help users plan trips, suggest destinations, build short itineraries, and answer travel questions. Keep replies concise, warm, and practical. Use markdown lists where helpful.",
+        },
+        ...data.messages,
+      ],
+    });
+
+    const reply = result.choices?.[0]?.message?.content ?? "";
+    return { reply };
+  });
