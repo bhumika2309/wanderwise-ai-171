@@ -14,6 +14,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppPlanRouteImport } from './routes/_app/plan'
+import { Route as AppChatRouteImport } from './routes/_app/chat'
 import { Route as AppTripsIndexRouteImport } from './routes/_app/trips.index'
 import { Route as AppTripsTripIdRouteImport } from './routes/_app/trips.$tripId'
 
@@ -41,6 +42,11 @@ const AppPlanRoute = AppPlanRouteImport.update({
   path: '/plan',
   getParentRoute: () => AppRoute,
 } as any)
+const AppChatRoute = AppChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppTripsIndexRoute = AppTripsIndexRouteImport.update({
   id: '/trips/',
   path: '/trips/',
@@ -56,6 +62,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/chat': typeof AppChatRoute
   '/plan': typeof AppPlanRoute
   '/trips/$tripId': typeof AppTripsTripIdRoute
   '/trips/': typeof AppTripsIndexRoute
@@ -64,6 +71,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/chat': typeof AppChatRoute
   '/plan': typeof AppPlanRoute
   '/trips/$tripId': typeof AppTripsTripIdRoute
   '/trips': typeof AppTripsIndexRoute
@@ -74,21 +82,37 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/_app/chat': typeof AppChatRoute
   '/_app/plan': typeof AppPlanRoute
   '/_app/trips/$tripId': typeof AppTripsTripIdRoute
   '/_app/trips/': typeof AppTripsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/signup' | '/plan' | '/trips/$tripId' | '/trips/'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/signup'
+    | '/chat'
+    | '/plan'
+    | '/trips/$tripId'
+    | '/trips/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/signup' | '/plan' | '/trips/$tripId' | '/trips'
+  to:
+    | '/'
+    | '/login'
+    | '/signup'
+    | '/chat'
+    | '/plan'
+    | '/trips/$tripId'
+    | '/trips'
   id:
     | '__root__'
     | '/'
     | '/_app'
     | '/login'
     | '/signup'
+    | '/_app/chat'
     | '/_app/plan'
     | '/_app/trips/$tripId'
     | '/_app/trips/'
@@ -138,6 +162,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPlanRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/chat': {
+      id: '/_app/chat'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof AppChatRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/trips/': {
       id: '/_app/trips/'
       path: '/trips'
@@ -156,12 +187,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteChildren {
+  AppChatRoute: typeof AppChatRoute
   AppPlanRoute: typeof AppPlanRoute
   AppTripsTripIdRoute: typeof AppTripsTripIdRoute
   AppTripsIndexRoute: typeof AppTripsIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppChatRoute: AppChatRoute,
   AppPlanRoute: AppPlanRoute,
   AppTripsTripIdRoute: AppTripsTripIdRoute,
   AppTripsIndexRoute: AppTripsIndexRoute,
@@ -178,12 +211,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
