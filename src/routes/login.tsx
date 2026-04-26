@@ -27,6 +27,21 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [oauthLoading, setOauthLoading] = useState(false);
+
+  const handleGoogle = async () => {
+    setOauthLoading(true);
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin,
+    });
+    if (result.error) {
+      setOauthLoading(false);
+      toast.error(result.error.message || "Google sign-in failed");
+      return;
+    }
+    if (result.redirected) return;
+    navigate({ to: search.redirect || "/plan" });
+  };
 
   useEffect(() => {
     if (!loading && user) {
