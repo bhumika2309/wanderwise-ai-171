@@ -187,18 +187,25 @@ export function DayCard({ day, onUpdate, onRegenerate, regenerating }: Props) {
               </div>
               {draft.activities.map((act, i) => (
                 <div key={i} className="space-y-2 rounded-lg border border-border/60 p-3">
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
+                    <Input
+                      type="time"
+                      value={act.startTime ?? ""}
+                      onChange={(e) => updateActivity(i, { startTime: e.target.value })}
+                      className="w-28"
+                    />
                     <Input
                       value={act.time}
                       onChange={(e) => updateActivity(i, { time: e.target.value })}
                       placeholder="Morning"
-                      className="w-32"
+                      className="w-28"
                       maxLength={30}
                     />
                     <Input
                       value={act.title}
                       onChange={(e) => updateActivity(i, { title: e.target.value })}
                       placeholder="Title"
+                      className="min-w-[140px] flex-1"
                       maxLength={120}
                     />
                     <Button
@@ -210,6 +217,19 @@ export function DayCard({ day, onUpdate, onRegenerate, regenerating }: Props) {
                     >
                       ×
                     </Button>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Label className="text-xs text-muted-foreground">Cost (USD)</Label>
+                    <Input
+                      type="number"
+                      min={0}
+                      step={1}
+                      value={act.costEstimate ?? 0}
+                      onChange={(e) =>
+                        updateActivity(i, { costEstimate: Math.max(0, Number(e.target.value) || 0) })
+                      }
+                      className="w-28"
+                    />
                   </div>
                   <Textarea
                     value={act.description}
