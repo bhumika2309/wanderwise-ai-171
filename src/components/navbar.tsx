@@ -32,7 +32,7 @@ export function Navbar() {
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-sunset shadow-warm">
             <Compass className="h-5 w-5 text-white" />
           </div>
-          <span className="text-lg font-bold tracking-tight">Wanderly</span>
+          <span className="text-lg font-bold tracking-tight">Planora AI</span>
         </Link>
 
         <nav className="hidden items-center gap-7 md:flex">

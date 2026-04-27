@@ -8,17 +8,17 @@ import heroImg from "@/assets/hero-sunset.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Wanderly — Plan trips with AI in seconds" },
+      { title: "Planora AI — Plan trips with AI in seconds" },
       {
         name: "description",
         content:
-          "Wanderly turns your travel ideas into a polished day-by-day itinerary. Edit, regenerate, and chat with an AI travel assistant.",
+          "Planora AI turns your travel ideas into a polished day-by-day itinerary. Edit, regenerate, and chat with an AI travel assistant.",
       },
-      { property: "og:title", content: "Wanderly — Plan trips with AI in seconds" },
+      { property: "og:title", content: "Planora AI — Plan trips with AI in seconds" },
       {
         property: "og:description",
         content:
-          "Wanderly turns your travel ideas into a polished day-by-day itinerary. Edit, regenerate, and chat with an AI travel assistant.",
+          "Planora AI turns your travel ideas into a polished day-by-day itinerary. Edit, regenerate, and chat with an AI travel assistant.",
       },
       { property: "og:image", content: heroImg },
       { name: "twitter:image", content: heroImg },
@@ -49,7 +49,7 @@ function Landing() {
               <span className="text-gradient-sunset">a single sentence.</span>
             </h1>
             <p className="max-w-xl text-lg text-muted-foreground">
-              Tell Wanderly where you're headed and what you love. We'll craft a
+              Tell Planora AI where you're headed and what you love. We'll craft a
               day-by-day itinerary you can edit, regenerate, and save — all in seconds.
             </p>
             <div className="flex flex-wrap gap-3">
@@ -112,7 +112,7 @@ function Landing() {
             {
               icon: MessageSquare,
               title: "Chat assistant",
-              text: "Ask Wanderly anything — visa tips, hidden gems, packing lists, weather, and more.",
+              text: "Ask Planora AI anything — visa tips, hidden gems, packing lists, weather, and more.",
             },
             {
               icon: BookmarkCheck,
@@ -127,7 +127,7 @@ function Landing() {
             {
               icon: Compass,
               title: "Built for any trip",
-              text: "Weekend getaways or two-week journeys — Wanderly scales to whatever you plan.",
+              text: "Weekend getaways or two-week journeys — Planora AI scales to whatever you plan.",
             },
           ].map((f) => (
             <div
@@ -163,7 +163,7 @@ function Landing() {
 
       <footer className="border-t border-border/60 py-6">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 text-xs text-muted-foreground">
-          <span>© {new Date().getFullYear()} Wanderly</span>
+          <span>© {new Date().getFullYear()} Planora AI</span>
           <span>Built with AI ✨</span>
         </div>
       </footer>

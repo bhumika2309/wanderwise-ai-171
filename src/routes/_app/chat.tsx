@@ -123,7 +123,7 @@ function ChatPage() {
                 <Sparkles className="h-7 w-7 text-white" />
               </div>
               <div>
-                <p className="font-semibold">Hi, I'm Wanderly</p>
+                <p className="font-semibold">Hi, I'm Planora AI</p>
                 <p className="text-sm text-muted-foreground">Try one of these to get started:</p>
               </div>
               <div className="flex flex-wrap justify-center gap-2">
