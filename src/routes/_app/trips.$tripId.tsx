@@ -1,14 +1,26 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Loader2, Trash2 } from "lucide-react";
+import { ArrowLeft, Check, Copy, Download, Globe, Loader2, Lock, Share2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import type { ItineraryDay } from "@/lib/trip-types";
 import { DayCard } from "@/components/day-card";
 import { regenerateDay } from "@/lib/trip.functions";
+import { downloadTripPdf } from "@/lib/trip-pdf";
 
 type TripRow = {
   id: string;
@@ -18,6 +30,8 @@ type TripRow = {
   budget: "low" | "medium" | "high";
   interests: string[];
   itinerary: ItineraryDay[];
+  share_token: string | null;
+  is_public: boolean;
 };
 
 export const Route = createFileRoute("/_app/trips/$tripId")({
