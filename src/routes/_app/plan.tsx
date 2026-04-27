@@ -1,9 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Loader2, Sparkles, Save } from "lucide-react";
+import { Loader2, Sparkles, Save, CalendarIcon } from "lucide-react";
 import { toast } from "sonner";
+import { format, differenceInCalendarDays, addDays } from "date-fns";
+import type { DateRange } from "react-day-picker";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -14,11 +15,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { generateTrip, regenerateDay } from "@/lib/trip.functions";
 import type { Budget, ItineraryDay } from "@/lib/trip-types";
 import { DayCard } from "@/components/day-card";
+import { DestinationAutocomplete } from "@/components/destination-autocomplete";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { cn } from "@/lib/utils";
 
 const INTEREST_OPTIONS = [
   "Adventure",
