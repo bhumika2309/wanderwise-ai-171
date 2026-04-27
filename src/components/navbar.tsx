@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Compass, LogOut, Menu } from "lucide-react";
+import { Compass, LayoutDashboard, LogOut, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import {
@@ -37,6 +37,7 @@ export function Navbar() {
 
         <nav className="hidden items-center gap-7 md:flex">
           {navItem("/", "Home")}
+          {user && navItem("/dashboard", "Dashboard")}
           {user && navItem("/plan", "Plan a trip")}
           {user && navItem("/trips", "My trips")}
           {user && navItem("/chat", "AI assistant")}
@@ -65,6 +66,12 @@ export function Navbar() {
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel>Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to="/dashboard">
+                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                    Dashboard
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link to="/plan">Plan a trip</Link>
                 </DropdownMenuItem>
