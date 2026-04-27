@@ -21,7 +21,7 @@ type TripRow = {
 export const Route = createFileRoute("/_app/dashboard")({
   head: () => ({
     meta: [
-      { title: "Dashboard — Wanderly" },
+      { title: "Dashboard — Planora AI" },
       { name: "description", content: "Your travel dashboard with trip stats and quick actions." },
     ],
   }),

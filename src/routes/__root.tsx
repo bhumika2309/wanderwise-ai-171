@@ -33,13 +33,13 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Wanderly — AI Trip Planner" },
+      { title: "Planora AI — AI Trip Planner" },
       {
         name: "description",
         content:
           "Plan personalized trips in seconds with AI. Day-by-day itineraries, smart edits, and a travel chat assistant.",
       },
-      { property: "og:title", content: "Wanderly — AI Trip Planner" },
+      { property: "og:title", content: "Planora AI — AI Trip Planner" },
       {
         property: "og:description",
         content:
@@ -47,7 +47,7 @@ export const Route = createRootRoute({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:title", content: "Wanderly — AI Trip Planner" },
+      { name: "twitter:title", content: "Planora AI — AI Trip Planner" },
       { name: "description", content: "WanderWise AI creates personalized travel itineraries using AI, integrating maps, weather, and dynamic editing." },
       { property: "og:description", content: "WanderWise AI creates personalized travel itineraries using AI, integrating maps, weather, and dynamic editing." },
       { name: "twitter:description", content: "WanderWise AI creates personalized travel itineraries using AI, integrating maps, weather, and dynamic editing." },
