@@ -67,6 +67,12 @@ export function Navbar() {
                 <DropdownMenuLabel>Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
+                  <Link to="/dashboard">
+                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                    Dashboard
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
                   <Link to="/plan">Plan a trip</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
