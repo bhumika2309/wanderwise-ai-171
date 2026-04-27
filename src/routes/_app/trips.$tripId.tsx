@@ -140,6 +140,22 @@ function TripDetailPage() {
           <p className="mt-2 text-muted-foreground">
             {trip.days}-day trip to {trip.destination}
           </p>
+          {(() => {
+            const tripTotal = trip.itinerary.reduce(
+              (sum, d) => sum + d.activities.reduce((s, a) => s + (a.costEstimate ?? 0), 0),
+              0
+            );
+            if (tripTotal <= 0) return null;
+            return (
+              <p className="mt-1 text-sm font-semibold text-foreground">
+                Estimated total:{" "}
+                <span className="text-primary">
+                  ${Math.round(tripTotal).toLocaleString()}
+                </span>{" "}
+                <span className="font-normal text-muted-foreground">/ person</span>
+              </p>
+            );
+          })()}
           <div className="mt-3 flex flex-wrap gap-1.5">
             <Badge variant="outline" className="capitalize">
               {trip.budget} budget
