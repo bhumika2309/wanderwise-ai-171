@@ -58,13 +58,20 @@ export function DayCard({ day, onUpdate, onRegenerate, regenerating }: Props) {
   const addActivity = () => {
     setDraft((d) => ({
       ...d,
-      activities: [...d.activities, { time: "Afternoon", title: "", description: "" }],
+      activities: [
+        ...d.activities,
+        { time: "Afternoon", startTime: "14:00", title: "", description: "", costEstimate: 0 },
+      ],
     }));
   };
 
   const removeActivity = (i: number) => {
     setDraft((d) => ({ ...d, activities: d.activities.filter((_, idx) => idx !== i) }));
   };
+
+  const dayTotal = day.activities.reduce((sum, a) => sum + (a.costEstimate ?? 0), 0);
+  const fmtMoney = (n: number) =>
+    n >= 1 ? `$${Math.round(n).toLocaleString()}` : "Free";
 
   return (
     <>
