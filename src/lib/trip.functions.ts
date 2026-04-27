@@ -14,7 +14,7 @@ const itineraryTool = {
   type: "function" as const,
   function: {
     name: "create_itinerary",
-    description: "Return a structured day-by-day travel itinerary.",
+    description: "Return a structured day-by-day travel itinerary with timeline and budget.",
     parameters: {
       type: "object",
       properties: {
@@ -36,10 +36,18 @@ const itineraryTool = {
                       type: "string",
                       description: "Morning, Lunch, Afternoon, Evening, or Night",
                     },
+                    startTime: {
+                      type: "string",
+                      description: "24-hour clock start time, e.g. '09:00'",
+                    },
                     title: { type: "string" },
                     description: { type: "string" },
+                    costEstimate: {
+                      type: "number",
+                      description: "Approximate cost per person in USD (0 if free)",
+                    },
                   },
-                  required: ["time", "title", "description"],
+                  required: ["time", "startTime", "title", "description", "costEstimate"],
                   additionalProperties: false,
                 },
               },
