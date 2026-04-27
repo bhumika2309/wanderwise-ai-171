@@ -122,11 +122,20 @@ export function DayCard({ day, onUpdate, onRegenerate, regenerating }: Props) {
                     <Icon className="h-5 w-5" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-baseline gap-2">
-                      <span className="text-xs font-semibold uppercase tracking-wide text-primary">
-                        {act.time}
-                      </span>
-                      <span className="text-base font-semibold text-foreground">{act.title}</span>
+                    <div className="flex flex-wrap items-baseline justify-between gap-2">
+                      <div className="flex flex-wrap items-baseline gap-2">
+                        <span className="text-xs font-semibold uppercase tracking-wide text-primary">
+                          {act.startTime ? `${act.startTime} · ${act.time}` : act.time}
+                        </span>
+                        <span className="text-base font-semibold text-foreground">
+                          {act.title}
+                        </span>
+                      </div>
+                      {typeof act.costEstimate === "number" && (
+                        <span className="rounded-md bg-secondary px-2 py-0.5 text-xs font-medium text-foreground">
+                          {fmtMoney(act.costEstimate)}
+                        </span>
+                      )}
                     </div>
                     <p className="mt-1 text-sm text-muted-foreground">{act.description}</p>
                   </div>
@@ -134,6 +143,14 @@ export function DayCard({ day, onUpdate, onRegenerate, regenerating }: Props) {
               );
             })}
           </ol>
+          <div className="flex items-center justify-between border-t border-border/60 bg-secondary/40 px-4 py-3 sm:px-5">
+            <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Day {day.day} total
+            </span>
+            <span className="text-sm font-bold text-foreground">
+              {fmtMoney(dayTotal)} <span className="font-normal text-muted-foreground">/ person</span>
+            </span>
+          </div>
         </CardContent>
       </Card>
 
