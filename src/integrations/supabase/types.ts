@@ -70,7 +70,9 @@ export type Database = {
           destination: string
           id: string
           interests: string[]
+          is_public: boolean
           itinerary: Json
+          share_token: string | null
           title: string
           updated_at: string
           user_id: string
@@ -82,7 +84,9 @@ export type Database = {
           destination: string
           id?: string
           interests?: string[]
+          is_public?: boolean
           itinerary?: Json
+          share_token?: string | null
           title: string
           updated_at?: string
           user_id: string
@@ -94,7 +98,9 @@ export type Database = {
           destination?: string
           id?: string
           interests?: string[]
+          is_public?: boolean
           itinerary?: Json
+          share_token?: string | null
           title?: string
           updated_at?: string
           user_id?: string

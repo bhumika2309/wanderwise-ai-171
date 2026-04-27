@@ -1,14 +1,26 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Loader2, Trash2 } from "lucide-react";
+import { ArrowLeft, Check, Copy, Download, Globe, Loader2, Lock, Share2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import type { ItineraryDay } from "@/lib/trip-types";
 import { DayCard } from "@/components/day-card";
 import { regenerateDay } from "@/lib/trip.functions";
+import { downloadTripPdf } from "@/lib/trip-pdf";
 
 type TripRow = {
   id: string;
@@ -18,6 +30,8 @@ type TripRow = {
   budget: "low" | "medium" | "high";
   interests: string[];
   itinerary: ItineraryDay[];
+  share_token: string | null;
+  is_public: boolean;
 };
 
 export const Route = createFileRoute("/_app/trips/$tripId")({
@@ -38,7 +52,7 @@ function TripDetailPage() {
     (async () => {
       const { data, error } = await supabase
         .from("trips")
-        .select("id,title,destination,days,budget,interests,itinerary")
+        .select("id,title,destination,days,budget,interests,itinerary,share_token,is_public")
         .eq("id", tripId)
         .maybeSingle();
       if (error) toast.error(error.message);
@@ -47,11 +61,55 @@ function TripDetailPage() {
           ...data,
           budget: data.budget as TripRow["budget"],
           itinerary: (data.itinerary as unknown as ItineraryDay[]) ?? [],
+          share_token: (data as { share_token: string | null }).share_token ?? null,
+          is_public: (data as { is_public: boolean }).is_public ?? false,
         });
       }
       setLoading(false);
     })();
   }, [tripId, user]);
+
+  const [shareLoading, setShareLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const shareUrl =
+    trip?.share_token && typeof window !== "undefined"
+      ? `${window.location.origin}/shared/${trip.share_token}`
+      : "";
+
+  const togglePublic = async (next: boolean) => {
+    if (!trip) return;
+    setShareLoading(true);
+    const updates: { is_public: boolean; share_token?: string } = { is_public: next };
+    if (next && !trip.share_token) {
+      updates.share_token = crypto.randomUUID();
+    }
+    const { data, error } = await supabase
+      .from("trips")
+      .update(updates)
+      .eq("id", trip.id)
+      .select("share_token,is_public")
+      .single();
+    setShareLoading(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    setTrip({
+      ...trip,
+      is_public: data.is_public ?? next,
+      share_token: (data as { share_token: string | null }).share_token ?? trip.share_token,
+    });
+    toast.success(next ? "Trip is now shareable" : "Sharing disabled");
+  };
+
+  const copyShareUrl = async () => {
+    if (!shareUrl) return;
+    await navigator.clipboard.writeText(shareUrl);
+    setCopied(true);
+    toast.success("Link copied!");
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const persist = async (next: ItineraryDay[]) => {
     if (!trip) return;
@@ -167,9 +225,66 @@ function TripDetailPage() {
             ))}
           </div>
         </div>
-        <Button variant="outline" onClick={remove} className="text-destructive hover:text-destructive">
-          <Trash2 className="mr-1.5 h-4 w-4" /> Delete trip
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" onClick={() => downloadTripPdf(trip)}>
+            <Download className="mr-1.5 h-4 w-4" /> Download PDF
+          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <Share2 className="mr-1.5 h-4 w-4" /> Share
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Share this trip</DialogTitle>
+                <DialogDescription>
+                  Anyone with the link can view (but not edit) your itinerary.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex items-center justify-between rounded-lg border bg-secondary/40 p-3">
+                <div className="flex items-center gap-2">
+                  {trip.is_public ? (
+                    <Globe className="h-4 w-4 text-primary" />
+                  ) : (
+                    <Lock className="h-4 w-4 text-muted-foreground" />
+                  )}
+                  <Label htmlFor="public-toggle" className="cursor-pointer">
+                    {trip.is_public ? "Public link enabled" : "Private trip"}
+                  </Label>
+                </div>
+                <Switch
+                  id="public-toggle"
+                  checked={trip.is_public}
+                  disabled={shareLoading}
+                  onCheckedChange={togglePublic}
+                />
+              </div>
+              {trip.is_public && shareUrl && (
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">Shareable link</Label>
+                  <div className="flex gap-2">
+                    <Input readOnly value={shareUrl} className="text-xs" />
+                    <Button type="button" size="icon" onClick={copyShareUrl}>
+                      {copied ? (
+                        <Check className="h-4 w-4" />
+                      ) : (
+                        <Copy className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </DialogContent>
+          </Dialog>
+          <Button
+            variant="outline"
+            onClick={remove}
+            className="text-destructive hover:text-destructive"
+          >
+            <Trash2 className="mr-1.5 h-4 w-4" /> Delete
+          </Button>
+        </div>
       </div>
 
       {saving && (

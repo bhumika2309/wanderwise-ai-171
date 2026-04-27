@@ -13,6 +13,7 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SharedShareTokenRouteImport } from './routes/shared.$shareToken'
 import { Route as AppPlanRouteImport } from './routes/_app/plan'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
 import { Route as AppChatRouteImport } from './routes/_app/chat'
@@ -36,6 +37,11 @@ const AppRoute = AppRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SharedShareTokenRoute = SharedShareTokenRouteImport.update({
+  id: '/shared/$shareToken',
+  path: '/shared/$shareToken',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppPlanRoute = AppPlanRouteImport.update({
@@ -71,6 +77,7 @@ export interface FileRoutesByFullPath {
   '/chat': typeof AppChatRoute
   '/dashboard': typeof AppDashboardRoute
   '/plan': typeof AppPlanRoute
+  '/shared/$shareToken': typeof SharedShareTokenRoute
   '/trips/$tripId': typeof AppTripsTripIdRoute
   '/trips/': typeof AppTripsIndexRoute
 }
@@ -81,6 +88,7 @@ export interface FileRoutesByTo {
   '/chat': typeof AppChatRoute
   '/dashboard': typeof AppDashboardRoute
   '/plan': typeof AppPlanRoute
+  '/shared/$shareToken': typeof SharedShareTokenRoute
   '/trips/$tripId': typeof AppTripsTripIdRoute
   '/trips': typeof AppTripsIndexRoute
 }
@@ -93,6 +101,7 @@ export interface FileRoutesById {
   '/_app/chat': typeof AppChatRoute
   '/_app/dashboard': typeof AppDashboardRoute
   '/_app/plan': typeof AppPlanRoute
+  '/shared/$shareToken': typeof SharedShareTokenRoute
   '/_app/trips/$tripId': typeof AppTripsTripIdRoute
   '/_app/trips/': typeof AppTripsIndexRoute
 }
@@ -105,6 +114,7 @@ export interface FileRouteTypes {
     | '/chat'
     | '/dashboard'
     | '/plan'
+    | '/shared/$shareToken'
     | '/trips/$tripId'
     | '/trips/'
   fileRoutesByTo: FileRoutesByTo
@@ -115,6 +125,7 @@ export interface FileRouteTypes {
     | '/chat'
     | '/dashboard'
     | '/plan'
+    | '/shared/$shareToken'
     | '/trips/$tripId'
     | '/trips'
   id:
@@ -126,6 +137,7 @@ export interface FileRouteTypes {
     | '/_app/chat'
     | '/_app/dashboard'
     | '/_app/plan'
+    | '/shared/$shareToken'
     | '/_app/trips/$tripId'
     | '/_app/trips/'
   fileRoutesById: FileRoutesById
@@ -135,6 +147,7 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
+  SharedShareTokenRoute: typeof SharedShareTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -165,6 +178,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shared/$shareToken': {
+      id: '/shared/$shareToken'
+      path: '/shared/$shareToken'
+      fullPath: '/shared/$shareToken'
+      preLoaderRoute: typeof SharedShareTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app/plan': {
@@ -228,16 +248,8 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
+  SharedShareTokenRoute: SharedShareTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
