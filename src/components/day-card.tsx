@@ -84,6 +84,9 @@ export function DayCard({ day, onUpdate, onRegenerate, regenerating }: Props) {
               </div>
               <h3 className="mt-1 text-xl font-bold">{day.title}</h3>
               <p className="mt-1 max-w-xl text-sm text-white/90">{day.summary}</p>
+              <div className="mt-2 inline-flex items-center rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-semibold text-white backdrop-blur">
+                Est. {fmtMoney(dayTotal)} / person
+              </div>
             </div>
             <div className="flex gap-2">
               <Button
