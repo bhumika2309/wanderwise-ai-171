@@ -14,7 +14,7 @@ const itineraryTool = {
   type: "function" as const,
   function: {
     name: "create_itinerary",
-    description: "Return a structured day-by-day travel itinerary.",
+    description: "Return a structured day-by-day travel itinerary with timeline and budget.",
     parameters: {
       type: "object",
       properties: {
@@ -36,10 +36,18 @@ const itineraryTool = {
                       type: "string",
                       description: "Morning, Lunch, Afternoon, Evening, or Night",
                     },
+                    startTime: {
+                      type: "string",
+                      description: "24-hour clock start time, e.g. '09:00'",
+                    },
                     title: { type: "string" },
                     description: { type: "string" },
+                    costEstimate: {
+                      type: "number",
+                      description: "Approximate cost per person in USD (0 if free)",
+                    },
                   },
-                  required: ["time", "title", "description"],
+                  required: ["time", "startTime", "title", "description", "costEstimate"],
                   additionalProperties: false,
                 },
               },
@@ -66,14 +74,14 @@ export const generateTrip = createServerFn({ method: "POST" })
         {
           role: "system",
           content:
-            "You are an expert travel planner. Create realistic, well-paced day-by-day itineraries. Be specific about places, neighborhoods, and dishes. Keep descriptions concise (1-2 sentences). Always return your answer via the create_itinerary tool.",
+            "You are an expert travel planner. Create realistic, well-paced day-by-day itineraries with a clear timeline (clock times) and a per-activity cost estimate in USD per person. Be specific about places, neighborhoods, and dishes. Keep descriptions concise (1-2 sentences). Always return your answer via the create_itinerary tool.",
         },
         {
           role: "user",
           content: `Plan a ${data.days}-day trip to ${data.destination}.
-Budget: ${data.budget}.
+Budget tier: ${data.budget} (low ≈ backpacker, medium ≈ comfortable, high ≈ luxury).
 Interests: ${interestsText}.
-Include 4-6 activities per day mixing morning/lunch/afternoon/evening. Suggest specific local spots.`,
+Include 4-6 activities per day mixing morning/lunch/afternoon/evening. For each activity provide a 24-hour startTime (e.g. "09:00") and a realistic costEstimate per person in USD that matches the budget tier (use 0 for free activities). Suggest specific local spots.`,
         },
       ],
       tools: [itineraryTool],
@@ -113,10 +121,18 @@ const dayTool = {
             type: "object",
             properties: {
               time: { type: "string" },
+              startTime: {
+                type: "string",
+                description: "24-hour clock start time, e.g. '09:00'",
+              },
               title: { type: "string" },
               description: { type: "string" },
+              costEstimate: {
+                type: "number",
+                description: "Approximate cost per person in USD (0 if free)",
+              },
             },
-            required: ["time", "title", "description"],
+            required: ["time", "startTime", "title", "description", "costEstimate"],
             additionalProperties: false,
           },
         },
@@ -139,12 +155,12 @@ export const regenerateDay = createServerFn({ method: "POST" })
         {
           role: "system",
           content:
-            "You are an expert travel planner. Regenerate a single day of an existing trip with fresh, specific suggestions. Always respond via the create_day tool.",
+            "You are an expert travel planner. Regenerate a single day of an existing trip with fresh, specific suggestions, including a clock-time timeline and per-activity USD cost estimates per person. Always respond via the create_day tool.",
         },
         {
           role: "user",
           content: `Trip: ${data.destination}, ${data.totalDays} days, budget ${data.budget}, interests ${interestsText}.
-Regenerate Day ${data.dayNumber} with 4-6 activities.${hint}`,
+Regenerate Day ${data.dayNumber} with 4-6 activities. Each activity must include a 24-hour startTime and a costEstimate per person in USD that matches the budget tier.${hint}`,
         },
       ],
       tools: [dayTool],

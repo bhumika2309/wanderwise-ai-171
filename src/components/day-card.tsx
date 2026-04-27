@@ -58,13 +58,20 @@ export function DayCard({ day, onUpdate, onRegenerate, regenerating }: Props) {
   const addActivity = () => {
     setDraft((d) => ({
       ...d,
-      activities: [...d.activities, { time: "Afternoon", title: "", description: "" }],
+      activities: [
+        ...d.activities,
+        { time: "Afternoon", startTime: "14:00", title: "", description: "", costEstimate: 0 },
+      ],
     }));
   };
 
   const removeActivity = (i: number) => {
     setDraft((d) => ({ ...d, activities: d.activities.filter((_, idx) => idx !== i) }));
   };
+
+  const dayTotal = day.activities.reduce((sum, a) => sum + (a.costEstimate ?? 0), 0);
+  const fmtMoney = (n: number) =>
+    n >= 1 ? `$${Math.round(n).toLocaleString()}` : "Free";
 
   return (
     <>
@@ -77,6 +84,9 @@ export function DayCard({ day, onUpdate, onRegenerate, regenerating }: Props) {
               </div>
               <h3 className="mt-1 text-xl font-bold">{day.title}</h3>
               <p className="mt-1 max-w-xl text-sm text-white/90">{day.summary}</p>
+              <div className="mt-2 inline-flex items-center rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-semibold text-white backdrop-blur">
+                Est. {fmtMoney(dayTotal)} / person
+              </div>
             </div>
             <div className="flex gap-2">
               <Button
@@ -112,11 +122,20 @@ export function DayCard({ day, onUpdate, onRegenerate, regenerating }: Props) {
                     <Icon className="h-5 w-5" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-baseline gap-2">
-                      <span className="text-xs font-semibold uppercase tracking-wide text-primary">
-                        {act.time}
-                      </span>
-                      <span className="text-base font-semibold text-foreground">{act.title}</span>
+                    <div className="flex flex-wrap items-baseline justify-between gap-2">
+                      <div className="flex flex-wrap items-baseline gap-2">
+                        <span className="text-xs font-semibold uppercase tracking-wide text-primary">
+                          {act.startTime ? `${act.startTime} · ${act.time}` : act.time}
+                        </span>
+                        <span className="text-base font-semibold text-foreground">
+                          {act.title}
+                        </span>
+                      </div>
+                      {typeof act.costEstimate === "number" && (
+                        <span className="rounded-md bg-secondary px-2 py-0.5 text-xs font-medium text-foreground">
+                          {fmtMoney(act.costEstimate)}
+                        </span>
+                      )}
                     </div>
                     <p className="mt-1 text-sm text-muted-foreground">{act.description}</p>
                   </div>
@@ -124,6 +143,14 @@ export function DayCard({ day, onUpdate, onRegenerate, regenerating }: Props) {
               );
             })}
           </ol>
+          <div className="flex items-center justify-between border-t border-border/60 bg-secondary/40 px-4 py-3 sm:px-5">
+            <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Day {day.day} total
+            </span>
+            <span className="text-sm font-bold text-foreground">
+              {fmtMoney(dayTotal)} <span className="font-normal text-muted-foreground">/ person</span>
+            </span>
+          </div>
         </CardContent>
       </Card>
 
@@ -160,18 +187,25 @@ export function DayCard({ day, onUpdate, onRegenerate, regenerating }: Props) {
               </div>
               {draft.activities.map((act, i) => (
                 <div key={i} className="space-y-2 rounded-lg border border-border/60 p-3">
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
+                    <Input
+                      type="time"
+                      value={act.startTime ?? ""}
+                      onChange={(e) => updateActivity(i, { startTime: e.target.value })}
+                      className="w-28"
+                    />
                     <Input
                       value={act.time}
                       onChange={(e) => updateActivity(i, { time: e.target.value })}
                       placeholder="Morning"
-                      className="w-32"
+                      className="w-28"
                       maxLength={30}
                     />
                     <Input
                       value={act.title}
                       onChange={(e) => updateActivity(i, { title: e.target.value })}
                       placeholder="Title"
+                      className="min-w-[140px] flex-1"
                       maxLength={120}
                     />
                     <Button
@@ -183,6 +217,19 @@ export function DayCard({ day, onUpdate, onRegenerate, regenerating }: Props) {
                     >
                       ×
                     </Button>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Label className="text-xs text-muted-foreground">Cost (USD)</Label>
+                    <Input
+                      type="number"
+                      min={0}
+                      step={1}
+                      value={act.costEstimate ?? 0}
+                      onChange={(e) =>
+                        updateActivity(i, { costEstimate: Math.max(0, Number(e.target.value) || 0) })
+                      }
+                      className="w-28"
+                    />
                   </div>
                   <Textarea
                     value={act.description}
