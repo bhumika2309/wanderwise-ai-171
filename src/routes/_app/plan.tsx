@@ -1,9 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Loader2, Sparkles, Save } from "lucide-react";
+import { Loader2, Sparkles, Save, CalendarIcon } from "lucide-react";
 import { toast } from "sonner";
+import { format, differenceInCalendarDays, addDays } from "date-fns";
+import type { DateRange } from "react-day-picker";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -14,11 +15,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { generateTrip, regenerateDay } from "@/lib/trip.functions";
 import type { Budget, ItineraryDay } from "@/lib/trip-types";
 import { DayCard } from "@/components/day-card";
+import { DestinationAutocomplete } from "@/components/destination-autocomplete";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { cn } from "@/lib/utils";
 
 const INTEREST_OPTIONS = [
   "Adventure",
@@ -41,7 +46,15 @@ function PlanPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [destination, setDestination] = useState("");
-  const [days, setDays] = useState(5);
+  const today = new Date();
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: today,
+    to: addDays(today, 4),
+  });
+  const days =
+    dateRange?.from && dateRange?.to
+      ? Math.max(1, Math.min(14, differenceInCalendarDays(dateRange.to, dateRange.from) + 1))
+      : 1;
   const [budget, setBudget] = useState<Budget>("medium");
   const [interests, setInterests] = useState<string[]>(["Food", "Nature"]);
   const [generating, setGenerating] = useState(false);
@@ -136,27 +149,70 @@ function PlanPage() {
           <CardDescription>Where to, how long, and what do you love?</CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div className="space-y-2 sm:col-span-2">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
               <Label htmlFor="dest">Destination</Label>
-              <Input
+              <DestinationAutocomplete
                 id="dest"
-                placeholder="Lisbon, Portugal"
                 value={destination}
-                onChange={(e) => setDestination(e.target.value)}
-                maxLength={100}
+                onChange={setDestination}
+                placeholder="Start typing a city…"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="days">Days</Label>
-              <Input
-                id="days"
-                type="number"
-                min={1}
-                max={14}
-                value={days}
-                onChange={(e) => setDays(Math.max(1, Math.min(14, Number(e.target.value) || 1)))}
-              />
+              <Label>Travel dates</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !dateRange?.from && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {dateRange?.from ? (
+                      dateRange.to ? (
+                        <>
+                          {format(dateRange.from, "LLL dd, y")} —{" "}
+                          {format(dateRange.to, "LLL dd, y")}
+                        </>
+                      ) : (
+                        format(dateRange.from, "LLL dd, y")
+                      )
+                    ) : (
+                      <span>Pick your dates</span>
+                    )}
+                    <span className="ml-auto text-xs text-muted-foreground">
+                      {days} day{days > 1 ? "s" : ""}
+                    </span>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="range"
+                    selected={dateRange}
+                    onSelect={(r) => {
+                      if (r?.from && r?.to) {
+                        const span = differenceInCalendarDays(r.to, r.from) + 1;
+                        if (span > 14) {
+                          toast.error("Trips are limited to 14 days");
+                          setDateRange({ from: r.from, to: addDays(r.from, 13) });
+                          return;
+                        }
+                      }
+                      setDateRange(r);
+                    }}
+                    numberOfMonths={1}
+                    disabled={(d) =>
+                      d < new Date(new Date().setHours(0, 0, 0, 0))
+                    }
+                    defaultMonth={dateRange?.from ?? today}
+                    initialFocus
+                    className={cn("p-3 pointer-events-auto")}
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
