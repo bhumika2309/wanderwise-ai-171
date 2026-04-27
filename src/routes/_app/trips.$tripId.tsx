@@ -225,9 +225,66 @@ function TripDetailPage() {
             ))}
           </div>
         </div>
-        <Button variant="outline" onClick={remove} className="text-destructive hover:text-destructive">
-          <Trash2 className="mr-1.5 h-4 w-4" /> Delete trip
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" onClick={() => downloadTripPdf(trip)}>
+            <Download className="mr-1.5 h-4 w-4" /> Download PDF
+          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <Share2 className="mr-1.5 h-4 w-4" /> Share
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Share this trip</DialogTitle>
+                <DialogDescription>
+                  Anyone with the link can view (but not edit) your itinerary.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex items-center justify-between rounded-lg border bg-secondary/40 p-3">
+                <div className="flex items-center gap-2">
+                  {trip.is_public ? (
+                    <Globe className="h-4 w-4 text-primary" />
+                  ) : (
+                    <Lock className="h-4 w-4 text-muted-foreground" />
+                  )}
+                  <Label htmlFor="public-toggle" className="cursor-pointer">
+                    {trip.is_public ? "Public link enabled" : "Private trip"}
+                  </Label>
+                </div>
+                <Switch
+                  id="public-toggle"
+                  checked={trip.is_public}
+                  disabled={shareLoading}
+                  onCheckedChange={togglePublic}
+                />
+              </div>
+              {trip.is_public && shareUrl && (
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">Shareable link</Label>
+                  <div className="flex gap-2">
+                    <Input readOnly value={shareUrl} className="text-xs" />
+                    <Button type="button" size="icon" onClick={copyShareUrl}>
+                      {copied ? (
+                        <Check className="h-4 w-4" />
+                      ) : (
+                        <Copy className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </DialogContent>
+          </Dialog>
+          <Button
+            variant="outline"
+            onClick={remove}
+            className="text-destructive hover:text-destructive"
+          >
+            <Trash2 className="mr-1.5 h-4 w-4" /> Delete
+          </Button>
+        </div>
       </div>
 
       {saving && (
