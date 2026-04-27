@@ -121,10 +121,18 @@ const dayTool = {
             type: "object",
             properties: {
               time: { type: "string" },
+              startTime: {
+                type: "string",
+                description: "24-hour clock start time, e.g. '09:00'",
+              },
               title: { type: "string" },
               description: { type: "string" },
+              costEstimate: {
+                type: "number",
+                description: "Approximate cost per person in USD (0 if free)",
+              },
             },
-            required: ["time", "title", "description"],
+            required: ["time", "startTime", "title", "description", "costEstimate"],
             additionalProperties: false,
           },
         },
