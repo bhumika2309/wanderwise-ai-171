@@ -52,7 +52,7 @@ function TripDetailPage() {
     (async () => {
       const { data, error } = await supabase
         .from("trips")
-        .select("id,title,destination,days,budget,interests,itinerary")
+        .select("id,title,destination,days,budget,interests,itinerary,share_token,is_public")
         .eq("id", tripId)
         .maybeSingle();
       if (error) toast.error(error.message);
@@ -61,11 +61,55 @@ function TripDetailPage() {
           ...data,
           budget: data.budget as TripRow["budget"],
           itinerary: (data.itinerary as unknown as ItineraryDay[]) ?? [],
+          share_token: (data as { share_token: string | null }).share_token ?? null,
+          is_public: (data as { is_public: boolean }).is_public ?? false,
         });
       }
       setLoading(false);
     })();
   }, [tripId, user]);
+
+  const [shareLoading, setShareLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const shareUrl =
+    trip?.share_token && typeof window !== "undefined"
+      ? `${window.location.origin}/shared/${trip.share_token}`
+      : "";
+
+  const togglePublic = async (next: boolean) => {
+    if (!trip) return;
+    setShareLoading(true);
+    const updates: { is_public: boolean; share_token?: string } = { is_public: next };
+    if (next && !trip.share_token) {
+      updates.share_token = crypto.randomUUID();
+    }
+    const { data, error } = await supabase
+      .from("trips")
+      .update(updates)
+      .eq("id", trip.id)
+      .select("share_token,is_public")
+      .single();
+    setShareLoading(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    setTrip({
+      ...trip,
+      is_public: data.is_public ?? next,
+      share_token: (data as { share_token: string | null }).share_token ?? trip.share_token,
+    });
+    toast.success(next ? "Trip is now shareable" : "Sharing disabled");
+  };
+
+  const copyShareUrl = async () => {
+    if (!shareUrl) return;
+    await navigator.clipboard.writeText(shareUrl);
+    setCopied(true);
+    toast.success("Link copied!");
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const persist = async (next: ItineraryDay[]) => {
     if (!trip) return;
