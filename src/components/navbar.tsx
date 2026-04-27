@@ -37,6 +37,7 @@ export function Navbar() {
 
         <nav className="hidden items-center gap-7 md:flex">
           {navItem("/", "Home")}
+          {user && navItem("/dashboard", "Dashboard")}
           {user && navItem("/plan", "Plan a trip")}
           {user && navItem("/trips", "My trips")}
           {user && navItem("/chat", "AI assistant")}
