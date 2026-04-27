@@ -216,26 +216,41 @@ function PlanPage() {
 
       {itinerary.length > 0 && (
         <div className="mt-10 space-y-6">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <h2 className="text-2xl font-bold tracking-tight">{title}</h2>
-              <p className="text-sm text-muted-foreground">
-                {days}-day {budget} budget trip to {destination}
-              </p>
-            </div>
-            <Button
-              onClick={handleSave}
-              disabled={saving}
-              className="bg-gradient-sunset shadow-warm hover:opacity-95"
-            >
-              {saving ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Save className="mr-2 h-4 w-4" />
-              )}
-              Save trip
-            </Button>
-          </div>
+          {(() => {
+            const tripTotal = itinerary.reduce(
+              (sum, d) => sum + d.activities.reduce((s, a) => s + (a.costEstimate ?? 0), 0),
+              0
+            );
+            return (
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h2 className="text-2xl font-bold tracking-tight">{title}</h2>
+                  <p className="text-sm text-muted-foreground">
+                    {days}-day {budget} budget trip to {destination}
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-foreground">
+                    Estimated total:{" "}
+                    <span className="text-primary">
+                      ${Math.round(tripTotal).toLocaleString()}
+                    </span>{" "}
+                    <span className="font-normal text-muted-foreground">/ person</span>
+                  </p>
+                </div>
+                <Button
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="bg-gradient-sunset shadow-warm hover:opacity-95"
+                >
+                  {saving ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Save className="mr-2 h-4 w-4" />
+                  )}
+                  Save trip
+                </Button>
+              </div>
+            );
+          })()}
           <div className="space-y-5">
             {itinerary.map((day, idx) => (
               <DayCard
