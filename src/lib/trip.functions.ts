@@ -74,14 +74,14 @@ export const generateTrip = createServerFn({ method: "POST" })
         {
           role: "system",
           content:
-            "You are an expert travel planner. Create realistic, well-paced day-by-day itineraries. Be specific about places, neighborhoods, and dishes. Keep descriptions concise (1-2 sentences). Always return your answer via the create_itinerary tool.",
+            "You are an expert travel planner. Create realistic, well-paced day-by-day itineraries with a clear timeline (clock times) and a per-activity cost estimate in USD per person. Be specific about places, neighborhoods, and dishes. Keep descriptions concise (1-2 sentences). Always return your answer via the create_itinerary tool.",
         },
         {
           role: "user",
           content: `Plan a ${data.days}-day trip to ${data.destination}.
-Budget: ${data.budget}.
+Budget tier: ${data.budget} (low ≈ backpacker, medium ≈ comfortable, high ≈ luxury).
 Interests: ${interestsText}.
-Include 4-6 activities per day mixing morning/lunch/afternoon/evening. Suggest specific local spots.`,
+Include 4-6 activities per day mixing morning/lunch/afternoon/evening. For each activity provide a 24-hour startTime (e.g. "09:00") and a realistic costEstimate per person in USD that matches the budget tier (use 0 for free activities). Suggest specific local spots.`,
         },
       ],
       tools: [itineraryTool],
