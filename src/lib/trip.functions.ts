@@ -155,12 +155,12 @@ export const regenerateDay = createServerFn({ method: "POST" })
         {
           role: "system",
           content:
-            "You are an expert travel planner. Regenerate a single day of an existing trip with fresh, specific suggestions. Always respond via the create_day tool.",
+            "You are an expert travel planner. Regenerate a single day of an existing trip with fresh, specific suggestions, including a clock-time timeline and per-activity USD cost estimates per person. Always respond via the create_day tool.",
         },
         {
           role: "user",
           content: `Trip: ${data.destination}, ${data.totalDays} days, budget ${data.budget}, interests ${interestsText}.
-Regenerate Day ${data.dayNumber} with 4-6 activities.${hint}`,
+Regenerate Day ${data.dayNumber} with 4-6 activities. Each activity must include a 24-hour startTime and a costEstimate per person in USD that matches the budget tier.${hint}`,
         },
       ],
       tools: [dayTool],
