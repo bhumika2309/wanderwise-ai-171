@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Pencil, RefreshCw, Sparkles, Sun, UtensilsCrossed, Sunset, Moon, Sunrise } from "lucide-react";
+import { MapPin, Pencil, RefreshCw, Sparkles, Sun, UtensilsCrossed, Sunset, Moon, Sunrise } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -27,12 +27,13 @@ function timeIcon(time: string) {
 
 interface Props {
   day: ItineraryDay;
+  destination?: string;
   onUpdate: (day: ItineraryDay) => void;
   onRegenerate: (hint: string) => Promise<void>;
   regenerating: boolean;
 }
 
-export function DayCard({ day, onUpdate, onRegenerate, regenerating }: Props) {
+export function DayCard({ day, destination, onUpdate, onRegenerate, regenerating }: Props) {
   const [editOpen, setEditOpen] = useState(false);
   const [regenOpen, setRegenOpen] = useState(false);
   const [regenHint, setRegenHint] = useState("");
@@ -138,6 +139,16 @@ export function DayCard({ day, onUpdate, onRegenerate, regenerating }: Props) {
                       )}
                     </div>
                     <p className="mt-1 text-sm text-muted-foreground">{act.description}</p>
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                        `${act.title}${destination ? `, ${destination}` : ""}`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+                    >
+                      <MapPin className="h-3.5 w-3.5" /> View on Google Maps
+                    </a>
                   </div>
                 </li>
               );

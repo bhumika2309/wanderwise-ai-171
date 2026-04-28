@@ -19,6 +19,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import type { ItineraryDay } from "@/lib/trip-types";
 import { DayCard } from "@/components/day-card";
+import { HotelsSection } from "@/components/hotels-section";
 import { regenerateDay } from "@/lib/trip.functions";
 import { downloadTripPdf } from "@/lib/trip-pdf";
 
@@ -296,11 +297,14 @@ function TripDetailPage() {
           <DayCard
             key={idx}
             day={day}
+            destination={trip.destination}
             regenerating={regenIdx === idx}
             onUpdate={(d) => updateDay(idx, d)}
             onRegenerate={(hint) => regen(idx, hint)}
           />
         ))}
+
+        <HotelsSection destination={trip.destination} />
       </div>
     </div>
   );
