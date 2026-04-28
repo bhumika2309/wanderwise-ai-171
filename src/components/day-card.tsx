@@ -139,6 +139,16 @@ export function DayCard({ day, destination, onUpdate, onRegenerate, regenerating
                       )}
                     </div>
                     <p className="mt-1 text-sm text-muted-foreground">{act.description}</p>
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                        `${act.title}${destination ? `, ${destination}` : ""}`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+                    >
+                      <MapPin className="h-3.5 w-3.5" /> View on Google Maps
+                    </a>
                   </div>
                 </li>
               );
