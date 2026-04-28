@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Pencil, RefreshCw, Sparkles, Sun, UtensilsCrossed, Sunset, Moon, Sunrise } from "lucide-react";
+import { MapPin, Pencil, RefreshCw, Sparkles, Sun, UtensilsCrossed, Sunset, Moon, Sunrise } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
