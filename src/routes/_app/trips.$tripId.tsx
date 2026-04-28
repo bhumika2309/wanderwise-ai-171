@@ -19,6 +19,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import type { ItineraryDay } from "@/lib/trip-types";
 import { DayCard } from "@/components/day-card";
+import { HotelsSection } from "@/components/hotels-section";
 import { regenerateDay } from "@/lib/trip.functions";
 import { downloadTripPdf } from "@/lib/trip-pdf";
 
