@@ -33,7 +33,7 @@ interface Props {
   regenerating: boolean;
 }
 
-export function DayCard({ day, onUpdate, onRegenerate, regenerating }: Props) {
+export function DayCard({ day, destination, onUpdate, onRegenerate, regenerating }: Props) {
   const [editOpen, setEditOpen] = useState(false);
   const [regenOpen, setRegenOpen] = useState(false);
   const [regenHint, setRegenHint] = useState("");
