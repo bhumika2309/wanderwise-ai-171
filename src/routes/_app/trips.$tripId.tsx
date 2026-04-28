@@ -297,11 +297,14 @@ function TripDetailPage() {
           <DayCard
             key={idx}
             day={day}
+            destination={trip.destination}
             regenerating={regenIdx === idx}
             onUpdate={(d) => updateDay(idx, d)}
             onRegenerate={(hint) => regen(idx, hint)}
           />
         ))}
+
+        <HotelsSection destination={trip.destination} />
       </div>
     </div>
   );
