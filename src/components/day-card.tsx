@@ -27,6 +27,7 @@ function timeIcon(time: string) {
 
 interface Props {
   day: ItineraryDay;
+  destination?: string;
   onUpdate: (day: ItineraryDay) => void;
   onRegenerate: (hint: string) => Promise<void>;
   regenerating: boolean;
