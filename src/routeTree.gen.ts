@@ -79,7 +79,7 @@ export interface FileRoutesByFullPath {
   '/plan': typeof AppPlanRoute
   '/shared/$shareToken': typeof SharedShareTokenRoute
   '/trips/$tripId': typeof AppTripsTripIdRoute
-  '/trips/': typeof AppTripsIndexRoute
+  '/trips': typeof AppTripsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -116,7 +116,7 @@ export interface FileRouteTypes {
     | '/plan'
     | '/shared/$shareToken'
     | '/trips/$tripId'
-    | '/trips/'
+    | '/trips'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -169,7 +169,7 @@ declare module '@tanstack/react-router' {
     '/_app': {
       id: '/_app'
       path: ''
-      fullPath: '/'
+      fullPath: ''
       preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -211,7 +211,7 @@ declare module '@tanstack/react-router' {
     '/_app/trips/': {
       id: '/_app/trips/'
       path: '/trips'
-      fullPath: '/trips/'
+      fullPath: '/trips'
       preLoaderRoute: typeof AppTripsIndexRouteImport
       parentRoute: typeof AppRoute
     }
@@ -253,12 +253,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
