@@ -107,34 +107,6 @@ WanderWise AI is a full-stack AI-powered travel planning platform that generates
 
 ---
 
-# 📂 Project Structure
-
-```bash
-wanderwise-ai/
-│
-├── client/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── context/
-│   │   ├── services/
-│   │   └── App.jsx
-│
-├── server/
-│   ├── controllers/
-│   ├── routes/
-│   ├── models/
-│   ├── middleware/
-│   ├── services/
-│   └── server.js
-│
-├── .env
-├── package.json
-└── README.md
-```
-
----
-
 # ⚙️ Installation & Setup
 
 ## 1️⃣ Clone Repository
