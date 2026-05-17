@@ -41,10 +41,6 @@ function Landing() {
       <section className="relative overflow-hidden">
         <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:py-20 lg:grid-cols-2 lg:items-center lg:gap-16">
           <div className="space-y-6">
-            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-background/60 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur">
-              <Sparkles className="h-3.5 w-3.5 text-primary" />
-              Powered by AI
-            </div>
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
               Plan your next trip with{" "}
               <span className="text-gradient-sunset">a single sentence.</span>
