@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Navbar } from "@/components/navbar";
 import { useAuth } from "@/hooks/use-auth";
 import heroImg from "@/assets/hero-sunset.jpg";
+import { useState, useEffect } from "react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -31,6 +32,8 @@ export const Route = createFileRoute("/")({
 function Landing() {
   const { user } = useAuth();
   const ctaTo = user ? "/plan" : "/signup";
+  const [year, setYear] = useState(2026);
+  useEffect(() => setYear(new Date().getFullYear()), []);
 
   return (
     <div className="min-h-screen bg-gradient-soft">
@@ -40,10 +43,6 @@ function Landing() {
       <section className="relative overflow-hidden">
         <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:py-20 lg:grid-cols-2 lg:items-center lg:gap-16">
           <div className="space-y-6">
-            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-background/60 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur">
-              <Sparkles className="h-3.5 w-3.5 text-primary" />
-              Powered by AI
-            </div>
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
               Plan your next trip with{" "}
               <span className="text-gradient-sunset">a single sentence.</span>
@@ -163,7 +162,7 @@ function Landing() {
 
       <footer className="border-t border-border/60 py-6">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 text-xs text-muted-foreground">
-          <span>© {new Date().getFullYear()} Planora AI</span>
+          <span>© {year} Planora AI</span>
         </div>
       </footer>
     </div>
