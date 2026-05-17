@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Navbar } from "@/components/navbar";
 import { useAuth } from "@/hooks/use-auth";
 import heroImg from "@/assets/hero-sunset.jpg";
+import { useState, useEffect } from "react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
