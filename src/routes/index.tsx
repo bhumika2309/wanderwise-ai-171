@@ -162,7 +162,7 @@ function Landing() {
 
       <footer className="border-t border-border/60 py-6">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 text-xs text-muted-foreground">
-          <span>© {new Date().getFullYear()} Planora AI</span>
+          <span>© {year} Planora AI</span>
         </div>
       </footer>
     </div>
