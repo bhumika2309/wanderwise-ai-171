@@ -32,6 +32,8 @@ export const Route = createFileRoute("/")({
 function Landing() {
   const { user } = useAuth();
   const ctaTo = user ? "/plan" : "/signup";
+  const [year, setYear] = useState(2026);
+  useEffect(() => setYear(new Date().getFullYear()), []);
 
   return (
     <div className="min-h-screen bg-gradient-soft">
