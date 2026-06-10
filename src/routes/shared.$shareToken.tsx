@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import type { ItineraryDay } from "@/lib/trip-types";
 import { downloadTripPdf } from "@/lib/trip-pdf";
+import { useCurrency } from "@/lib/currency";
 
 type SharedTrip = {
   title: string;
@@ -24,6 +25,7 @@ function SharedTripPage() {
   const { shareToken } = Route.useParams();
   const [trip, setTrip] = useState<SharedTrip | null>(null);
   const [loading, setLoading] = useState(true);
+  const { format: fmtMoney, currency, toggle } = useCurrency();
 
   useEffect(() => {
     (async () => {
@@ -84,13 +86,18 @@ function SharedTripPage() {
             </div>
             <span className="text-lg font-bold tracking-tight">Planora AI</span>
           </Link>
-          <Button
-            size="sm"
-            onClick={() => downloadTripPdf(trip)}
-            className="bg-gradient-sunset shadow-warm hover:opacity-95"
-          >
-            <Download className="mr-1.5 h-4 w-4" /> Download PDF
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={toggle} className="font-semibold">
+              {currency === "USD" ? "$ USD" : "₹ INR"}
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => downloadTripPdf(trip)}
+              className="bg-gradient-sunset shadow-warm hover:opacity-95"
+            >
+              <Download className="mr-1.5 h-4 w-4" /> Download PDF
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -104,7 +111,7 @@ function SharedTripPage() {
           {tripTotal > 0 && (
             <p className="mt-1 text-sm font-semibold">
               Estimated total:{" "}
-              <span className="text-primary">${Math.round(tripTotal).toLocaleString()}</span>{" "}
+              <span className="text-primary">{fmtMoney(tripTotal)}</span>{" "}
               <span className="font-normal text-muted-foreground">/ person</span>
             </p>
           )}
