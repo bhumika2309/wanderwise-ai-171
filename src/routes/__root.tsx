@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/hooks/use-auth";
+import { CurrencyProvider } from "@/lib/currency";
 
 import appCss from "../styles.css?url";
 
@@ -86,8 +87,10 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Outlet />
-        <Toaster richColors position="top-right" />
+        <CurrencyProvider>
+          <Outlet />
+          <Toaster richColors position="top-right" />
+        </CurrencyProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

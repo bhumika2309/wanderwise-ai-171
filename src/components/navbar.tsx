@@ -2,6 +2,7 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { Compass, LayoutDashboard, LogOut, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
+import { useCurrency } from "@/lib/currency";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +15,7 @@ import {
 export function Navbar() {
   const { user, signOut } = useAuth();
   const location = useLocation();
+  const { currency, toggle } = useCurrency();
 
   const navItem = (to: string, label: string) => (
     <Link
@@ -44,6 +46,15 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={toggle}
+            title={`Switch to ${currency === "USD" ? "INR" : "USD"}`}
+            className="font-semibold"
+          >
+            {currency === "USD" ? "$ USD" : "₹ INR"}
+          </Button>
           {!user ? (
             <>
               <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">

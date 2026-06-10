@@ -24,6 +24,7 @@ import { DestinationAutocomplete } from "@/components/destination-autocomplete";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
+import { useCurrency } from "@/lib/currency";
 
 const INTEREST_OPTIONS = [
   "Adventure",
@@ -45,6 +46,7 @@ export const Route = createFileRoute("/_app/plan")({
 function PlanPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { format: fmtMoney } = useCurrency();
   const [destination, setDestination] = useState("");
   const today = new Date();
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
@@ -287,7 +289,7 @@ function PlanPage() {
                   <p className="mt-1 text-sm font-semibold text-foreground">
                     Estimated total:{" "}
                     <span className="text-primary">
-                      ${Math.round(tripTotal).toLocaleString()}
+                      {fmtMoney(tripTotal)}
                     </span>{" "}
                     <span className="font-normal text-muted-foreground">/ person</span>
                   </p>

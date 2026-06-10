@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import type { ItineraryDay, Activity } from "@/lib/trip-types";
+import { useCurrency } from "@/lib/currency";
 
 function timeIcon(time: string) {
   const t = time.toLowerCase();
@@ -38,6 +39,7 @@ export function DayCard({ day, destination, onUpdate, onRegenerate, regenerating
   const [regenOpen, setRegenOpen] = useState(false);
   const [regenHint, setRegenHint] = useState("");
   const [draft, setDraft] = useState<ItineraryDay>(day);
+  const { format: fmtMoney, currency } = useCurrency();
 
   const openEdit = () => {
     setDraft(structuredClone(day));
@@ -71,8 +73,6 @@ export function DayCard({ day, destination, onUpdate, onRegenerate, regenerating
   };
 
   const dayTotal = day.activities.reduce((sum, a) => sum + (a.costEstimate ?? 0), 0);
-  const fmtMoney = (n: number) =>
-    n >= 1 ? `$${Math.round(n).toLocaleString()}` : "Free";
 
   return (
     <>
@@ -232,7 +232,7 @@ export function DayCard({ day, destination, onUpdate, onRegenerate, regenerating
                     </Button>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Label className="text-xs text-muted-foreground">Cost (USD)</Label>
+                    <Label className="text-xs text-muted-foreground">Cost (USD){currency === "INR" ? " — stored in USD" : ""}</Label>
                     <Input
                       type="number"
                       min={0}
