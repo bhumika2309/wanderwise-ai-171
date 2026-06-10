@@ -44,6 +44,7 @@ function TripDetailPage() {
   const { tripId } = Route.useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { format: fmtMoney } = useCurrency();
   const [trip, setTrip] = useState<TripRow | null>(null);
   const [loading, setLoading] = useState(true);
   const [regenIdx, setRegenIdx] = useState<number | null>(null);
