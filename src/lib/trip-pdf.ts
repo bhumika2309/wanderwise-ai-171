@@ -1,5 +1,15 @@
 import { jsPDF } from "jspdf";
 import type { ItineraryDay } from "./trip-types";
+import { getCurrencySnapshot } from "./currency";
+
+function fmtPdfMoney(usd: number): string {
+  const { currency, usdToInr } = getCurrencySnapshot();
+  if (currency === "INR") {
+    // jsPDF default helvetica lacks the ₹ glyph; use "Rs" prefix.
+    return `Rs ${Math.round(usd * usdToInr).toLocaleString("en-IN")}`;
+  }
+  return `$${Math.round(usd).toLocaleString()}`;
+}
 
 type TripForPdf = {
   title: string;
@@ -51,7 +61,7 @@ export function downloadTripPdf(trip: TripForPdf) {
     0
   );
   if (tripTotal > 0) {
-    writeWrapped(`Estimated total: $${Math.round(tripTotal).toLocaleString()} / person`, 11, {
+    writeWrapped(`Estimated total: ${fmtPdfMoney(tripTotal)} / person`, 11, {
       bold: true,
     });
   }
@@ -74,7 +84,7 @@ export function downloadTripPdf(trip: TripForPdf) {
       writeWrapped(`• ${time} — ${a.title}`, 12, { bold: true });
       if (a.description) writeWrapped(a.description, 11, { color: [70, 70, 70] });
       if (a.costEstimate && a.costEstimate > 0) {
-        writeWrapped(`  ~ $${Math.round(a.costEstimate).toLocaleString()} / person`, 10, {
+        writeWrapped(`  ~ ${fmtPdfMoney(a.costEstimate)} / person`, 10, {
           color: [120, 120, 120],
         });
       }
@@ -83,7 +93,7 @@ export function downloadTripPdf(trip: TripForPdf) {
 
     const dayTotal = day.activities.reduce((s, a) => s + (a.costEstimate ?? 0), 0);
     if (dayTotal > 0) {
-      writeWrapped(`Day total: $${Math.round(dayTotal).toLocaleString()} / person`, 11, {
+      writeWrapped(`Day total: ${fmtPdfMoney(dayTotal)} / person`, 11, {
         bold: true,
       });
     }
