@@ -134,7 +134,7 @@ function SharedTripPage() {
                   </h2>
                   {dayTotal > 0 && (
                     <span className="text-sm font-semibold text-primary">
-                      ${Math.round(dayTotal).toLocaleString()}
+                      {fmtMoney(dayTotal)}
                     </span>
                   )}
                 </div>
@@ -151,7 +151,7 @@ function SharedTripPage() {
                         </p>
                         {a.costEstimate ? (
                           <span className="text-xs text-muted-foreground">
-                            ~ ${Math.round(a.costEstimate).toLocaleString()}
+                            ~ {fmtMoney(a.costEstimate)}
                           </span>
                         ) : null}
                       </div>
