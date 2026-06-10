@@ -22,6 +22,7 @@ import { DayCard } from "@/components/day-card";
 import { HotelsSection } from "@/components/hotels-section";
 import { regenerateDay } from "@/lib/trip.functions";
 import { downloadTripPdf } from "@/lib/trip-pdf";
+import { useCurrency } from "@/lib/currency";
 
 type TripRow = {
   id: string;
@@ -209,7 +210,7 @@ function TripDetailPage() {
               <p className="mt-1 text-sm font-semibold text-foreground">
                 Estimated total:{" "}
                 <span className="text-primary">
-                  ${Math.round(tripTotal).toLocaleString()}
+                  {fmtMoney(tripTotal)}
                 </span>{" "}
                 <span className="font-normal text-muted-foreground">/ person</span>
               </p>

@@ -46,6 +46,7 @@ export const Route = createFileRoute("/_app/plan")({
 function PlanPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { format: fmtMoney } = useCurrency();
   const [destination, setDestination] = useState("");
   const today = new Date();
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
